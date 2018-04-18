@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using OnehubClient.Models;
 using OnehubClient.Transport;
@@ -21,7 +22,11 @@ namespace OnehubClient
 
 		public async Task<OnehubFolder> CreateFolder(long workspaceId, string name)
 		{
-			await _authorization.AuthorizeAsync(_transport, _credentials);
+			return await authorizeAction(() => createFolder(workspaceId, name));
+		}
+
+		private async Task<OnehubFolder> createFolder(long workspaceId, string name)
+		{
 			var onehubFolder = await _transport.CreateFolder(workspaceId, name);
 			var errors = onehubFolder.Folder.Errors;
 			if (errors?.Filename != null && errors.Filename.Any())
@@ -35,8 +40,22 @@ namespace OnehubClient
 
 		public async Task<OnehubFile> UploadFile(long workspaceId, long folderId, FileDescription file)
 		{
-			await _authorization.AuthorizeAsync(_transport, _credentials);
-			return await _transport.UploadFile(workspaceId, folderId, file);
+			return await authorizeAction(() => _transport.UploadFile(workspaceId, folderId, file));
 		}
+
+		private async Task<TResult> authorizeAction<TResult>(Func<Task<TResult>> action)
+		{
+			await _authorization.AuthorizeAsync(_transport, _credentials);
+			try
+			{
+				return await action();
+			}
+			catch (InvalidAccessTokenException)
+			{
+				await _authorization.ReAuthorizeAsync(_transport, _credentials);
+			} 
+			return await action();
+		}
+
 	}
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Mime;
-using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using OnehubClient.Models;
@@ -29,6 +27,7 @@ namespace OnehubClient.Transport
 			var httpResponse = await _apiHttpClient.PostAsync(
 				new Uri($"https://ws-api.onehub.com/workspaces/{workspaceId}/folders"),
 				new JsonContent(new {folder = new {filename = name}}));
+			httpResponse.EnsureAuthorized();
 			var response = await httpResponse.Content.ReadAsStringAsync();
 			return JsonConvert.DeserializeObject<OnehubFolder>(response);
 		}
@@ -50,6 +49,7 @@ namespace OnehubClient.Transport
 			content.Add(streamContent);
 
 			var httpResponse = await _apiHttpClient.PostAsync(new Uri($"https://ws-api.onehub.com/workspaces/{workspaceId}/folders/{folderId}/files"), content);
+			httpResponse.EnsureAuthorized();
 			var response = await httpResponse.Content.ReadAsStringAsync();
 			return JsonConvert.DeserializeObject<OnehubFile>(response);
 		}
@@ -59,6 +59,7 @@ namespace OnehubClient.Transport
 			var rootFolder = await GetRootFolder(workspaceId);
 			var httpResponse =
 				await _apiHttpClient.GetAsync(new Uri($"https://ws-api.onehub.com/workspaces/{workspaceId}/folders/{rootFolder.Folder.Id}"));
+			httpResponse.EnsureAuthorized();
 			var response = await httpResponse.Content.ReadAsStringAsync();
 			return JsonConvert.DeserializeObject<OnehubFolders>(response);
 		}
@@ -68,6 +69,7 @@ namespace OnehubClient.Transport
 			var httpResponse =
 				await _apiHttpClient.GetAsync(new Uri($"https://ws-api.onehub.com/workspaces/{workspaceId}/folders"));
 			var response = await httpResponse.Content.ReadAsStringAsync();
+			httpResponse.EnsureAuthorized();
 			return JsonConvert.DeserializeObject<OnehubFolders>(response).Folders[0];
 		}
 

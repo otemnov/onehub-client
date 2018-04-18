@@ -48,6 +48,7 @@
     <Compile Include="IOnehubAuthorization.cs" />
     <Compile Include="IOnehubClient.cs" />
     <Compile Include="Models\FileDescription.cs" />
+    <Compile Include="Models\InvalidAccessTokenException.cs" />
     <Compile Include="Models\OnehubFolder.cs" />
     <Compile Include="Models\OnehubAuthToken.cs" />
     <Compile Include="Models\OnehubCredentials.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="OnehubClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Transport\ApiTransport.cs" />
+    <Compile Include="Transport\HttpResponseMessageExtensions.cs" />
     <Compile Include="Transport\IApiTransport.cs" />
     <Compile Include="Transport\IAuthTransport.cs" />
     <Compile Include="Transport\AuthTransport.cs" />

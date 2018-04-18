@@ -21,6 +21,7 @@ namespace OnehubClient.Transport
 		public async Task<OnehubAuthToken> RequestAuthToken(OnehubCredentials onehubCredentials)
 		{
 			HttpResponseMessage authMessage = await _authHttpClient.PostAsync(new Uri("https://ws-api.onehub.com/oauth/token"), toFormUrlEncodedContent(onehubCredentials));
+			authMessage.EnsureSuccessStatusCode();
 			DateTime now = DateTime.UtcNow;
 			JObject authObject =  JObject.Parse(await authMessage.Content.ReadAsStringAsync());
 			return new OnehubAuthToken

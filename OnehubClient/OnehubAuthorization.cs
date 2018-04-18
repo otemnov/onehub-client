@@ -27,6 +27,13 @@ namespace OnehubClient
 			transport.ApplyAuthentication(onehubAuthToken);
 		}
 
+		public async Task ReAuthorizeAsync(IApiTransport transport, OnehubCredentials credentials)
+		{
+			var onehubAuthToken = await _transport.RequestAuthToken(credentials);
+			await _tokenStore.StoreTokenAsync(credentials, onehubAuthToken);
+			transport.ApplyAuthentication(onehubAuthToken);
+		}
+
 		private static bool shouldRequestToken(OnehubAuthToken onehubAuthToken)
 		{
 			return onehubAuthToken == null || onehubAuthToken.AccessTokenExpirationUtc > DateTime.UtcNow;
