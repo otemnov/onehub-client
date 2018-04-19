@@ -32,7 +32,7 @@ namespace OnehubClient
 			if (errors?.Filename != null && errors.Filename.Any())
 			{
 				var folders = await _transport.GetFolders(workspaceId);
-				onehubFolder = folders.Folders.FirstOrDefault(x => x.Folder.SanitizedName == onehubFolder.Folder.SanitizedName);
+				onehubFolder = folders.Folders.FirstOrDefault(x => string.Equals(x.Folder.SanitizedName, onehubFolder.Folder.SanitizedName, StringComparison.OrdinalIgnoreCase));
 			}
 
 			return onehubFolder;
