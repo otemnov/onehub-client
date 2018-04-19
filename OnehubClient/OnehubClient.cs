@@ -31,8 +31,14 @@ namespace OnehubClient
 			var errors = onehubFolder.Folder.Errors;
 			if (errors?.Filename != null && errors.Filename.Any())
 			{
-				var folders = await _transport.GetFolders(workspaceId);
-				onehubFolder = folders.Folders.FirstOrDefault(x => string.Equals(x.Folder.SanitizedName, onehubFolder.Folder.SanitizedName, StringComparison.OrdinalIgnoreCase));
+				var sanitizedName = onehubFolder.Folder.SanitizedName;
+				int? offset = null;
+				do
+				{
+					OnehubFolders folders = await _transport.GetFolders(workspaceId, offset.GetValueOrDefault());
+					onehubFolder = folders.Folders.FirstOrDefault(x => x.Folder.SanitizedName == sanitizedName);
+					offset = folders.NextOffset;
+				} while (onehubFolder == null && offset.HasValue);
 			}
 
 			return onehubFolder;

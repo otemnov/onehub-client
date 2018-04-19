@@ -54,11 +54,10 @@ namespace OnehubClient.Transport
 			return JsonConvert.DeserializeObject<OnehubFile>(response);
 		}
 
-		public async Task<OnehubFolders> GetFolders(long workspaceId)
+		public async Task<OnehubFolders> GetFolders(long workspaceId, int offset)
 		{
 			var rootFolder = await GetRootFolder(workspaceId);
-			var httpResponse =
-				await _apiHttpClient.GetAsync(new Uri($"https://ws-api.onehub.com/workspaces/{workspaceId}/folders/{rootFolder.Folder.Id}"));
+			var httpResponse = await _apiHttpClient.GetAsync(new Uri($"https://ws-api.onehub.com/workspaces/{workspaceId}/folders/{rootFolder.Folder.Id}?offset={offset}"));
 			httpResponse.EnsureAuthorized();
 			var response = await httpResponse.Content.ReadAsStringAsync();
 			return JsonConvert.DeserializeObject<OnehubFolders>(response);
