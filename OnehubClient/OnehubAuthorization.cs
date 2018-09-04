@@ -36,7 +36,7 @@ namespace OnehubClient
 
 		private static bool shouldRequestToken(OnehubAuthToken onehubAuthToken)
 		{
-			return onehubAuthToken == null || onehubAuthToken.AccessTokenExpirationUtc > DateTime.UtcNow;
+			return onehubAuthToken == null || onehubAuthToken.AccessTokenExpirationUtc < DateTime.UtcNow;
 		}
 	}
 }
